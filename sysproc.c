@@ -149,3 +149,40 @@ sys_set_level(void) {
 
   set_level(pid, level);
 }
+
+void
+sys_sem_init(void) 
+{
+  int i, v;
+  
+  if(argint(0, &i) < 0)
+    return;
+
+  if(argint(1, &v) < 0)
+    return;
+
+  sem_init(i, v);
+}
+
+void
+sys_sem_acquire(void)
+{
+  int i;
+
+  if(argint(0, &i) < 0)
+    return;
+    
+  sem_acquire(i);
+}
+
+void
+sys_sem_release(void)
+{ 
+  int i;
+
+  if(argint(0, &i) < 0)
+    return;
+    
+  sem_release(i);
+}
+

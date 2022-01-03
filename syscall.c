@@ -111,6 +111,10 @@ extern int sys_print_process(void);
 extern int sys_set_level(void);
 extern int sys_set_mhrrn_param_system(void);
 extern int sys_set_mhrrn_param_process(void);
+extern int sys_sem_init(void);
+extern int sys_sem_acquire(void);
+extern int sys_sem_release(void);
+
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -142,6 +146,9 @@ static int (*syscalls[])(void) = {
 [SYS_set_level] sys_set_level,
 [SYS_set_mhrrn_param_system] sys_set_mhrrn_param_system,
 [SYS_set_mhrrn_param_process] sys_set_mhrrn_param_process,
+[SYS_sem_init] sys_sem_init,
+[SYS_sem_acquire] sys_sem_acquire,
+[SYS_sem_release] sys_sem_release,
 };
 
 void

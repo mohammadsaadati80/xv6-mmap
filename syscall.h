@@ -28,3 +28,6 @@
 #define SYS_set_level 27
 #define SYS_set_mhrrn_param_system 28
 #define SYS_set_mhrrn_param_process 29
+#define SYS_sem_init 30
+#define SYS_sem_acquire 31
+#define SYS_sem_release 32

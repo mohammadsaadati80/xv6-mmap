@@ -31,6 +31,9 @@ void print_process(void);
 void set_level(int, int);
 void set_mhrrn_param_system(int);
 void set_mhrrn_param_process(int, int);
+void sem_init(int, int);
+void sem_acquire(int);
+void sem_release(int);
 
 // ulib.c
 int stat(const char*, struct stat*);

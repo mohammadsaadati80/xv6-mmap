@@ -127,6 +127,9 @@ void            print_process(void);
 void            set_mhrrn_param_process(int, int);
 void            set_mhrrn_param_system(int);
 void            set_level(int, int);
+void            sem_init(int, int);
+void            sem_acquire(int);
+void            sem_release(int);
 
 // swtch.S
 void            swtch(struct context**, struct context*);

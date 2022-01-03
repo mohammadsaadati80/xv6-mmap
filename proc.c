@@ -16,6 +16,58 @@ struct {
 
 static struct proc *initproc;
 
+struct semaphore {
+  int value, first_proc, queue_siz;
+  struct proc *queue[NPROC];
+  struct spinlock lock;
+};
+
+struct semaphore semtable[5];
+
+void
+sem_init(int i, int value)
+{
+  semtable[i].value = value;
+  semtable[i].first_proc = 0;
+  semtable[i].queue_siz = 0;
+}
+
+void
+sem_acquire(int i)
+{
+  acquire(&semtable[i].lock);
+
+  if(semtable[i].value <= 0) {
+    struct proc *p = myproc();
+    int index = (semtable[i].first_proc + semtable[i].queue_siz) % NPROC;
+    semtable[i].queue[index] = p;
+    semtable[i].queue_siz++;
+    sleep(&p->pid, &semtable[i].lock);
+  }
+  semtable[i].value--;
+
+  release(&semtable[i].lock);
+}
+
+void 
+sem_release(int i)
+{
+  acquire(&semtable[i].lock);
+  semtable[i].value++;
+
+  if(semtable[i].value > 0) {
+    if(semtable[i].queue_siz > 0) {
+      int index = semtable[i].first_proc;
+      semtable[i].queue_siz--;
+      semtable[i].first_proc = (semtable[i].first_proc + 1) % NPROC;
+      wakeup(&semtable[i].queue[index]->pid);
+    }
+  }
+
+  release(&semtable[i].lock);
+}
+
+
 int nextpid = 1;
 extern void forkret(void);
 extern void trapret(void);
@@ -90,7 +142,7 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-  p->level = 2;
+  p->level = 1;
   p->last_exec = ticks;
   p->arrival_time = ticks;
   p->exec_time = 1;
