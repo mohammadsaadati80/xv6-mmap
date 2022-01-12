@@ -114,6 +114,8 @@ extern int sys_set_mhrrn_param_process(void);
 extern int sys_sem_init(void);
 extern int sys_sem_acquire(void);
 extern int sys_sem_release(void);
+extern int sys_get_free_pages_count(void);
+extern int sys_mmap(void);
 
 
 static int (*syscalls[])(void) = {
@@ -149,6 +151,8 @@ static int (*syscalls[])(void) = {
 [SYS_sem_init] sys_sem_init,
 [SYS_sem_acquire] sys_sem_acquire,
 [SYS_sem_release] sys_sem_release,
+[SYS_get_free_pages_count] sys_get_free_pages_count,
+[SYS_mmap] sys_mmap
 };
 
 void

@@ -130,6 +130,9 @@ void            set_level(int, int);
 void            sem_init(int, int);
 void            sem_acquire(int);
 void            sem_release(int);
+int             get_free_pages_count(void);
+int             mmap(int, int, int, void*);
+int             lazy_map(char*);
 
 // swtch.S
 void            swtch(struct context**, struct context*);
@@ -195,6 +198,11 @@ void            switchuvm(struct proc*);
 void            switchkvm(void);
 int             copyout(pde_t*, uint, void*, uint);
 void            clearpteu(pde_t *pgdir, char *uva);
+int 	        mappages(pde_t *pgdir, void *va, uint size, uint pa, int perm);
+
+// sysfile.c
+int 			argfd(int n, int *pfd, struct file **pf);
+
 
 // number of elements in fixed-size array
 #define NELEM(x) (sizeof(x)/sizeof((x)[0]))
