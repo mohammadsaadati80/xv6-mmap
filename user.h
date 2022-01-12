@@ -34,6 +34,9 @@ void set_mhrrn_param_process(int, int);
 void sem_init(int, int);
 void sem_acquire(int);
 void sem_release(int);
+int get_free_pages_count(void);
+char* mmap(int, int, int);
+int lazy_map(char*);
 
 // ulib.c
 int stat(const char*, struct stat*);

@@ -181,18 +181,12 @@ UPROGS=\
 	_usertests\
 	_wc\
 	_zombie\
-	_factor\
-	_parent_pid\
-	_sum_of_digits\
-	_debugger\
-	_program\
-	_sector_tester\
-	_print_process\
-	_set_level\
-	_phil\
+	_free_pages_count\
+	_lazy_mmap\
 
-fs.img: mkfs README sector_file.txt sector_file1.txt $(UPROGS)
-	./mkfs fs.img README sector_file.txt sector_file1.txt $(UPROGS)
+
+fs.img: mkfs README number.txt $(UPROGS)
+	./mkfs fs.img README number.txt $(UPROGS)
 
 -include *.d
 
@@ -205,7 +199,7 @@ clean:
 
 # make a printout
 FILES = $(shell grep -v '^\#' runoff.list)
-PRINT = runoff.list runoff.spec README sector_file.txt sector_file1.txt toc.hdr toc.ftr $(FILES)
+PRINT = runoff.list runoff.spec README number.txt sector_file.txt sector_file1.txt toc.hdr toc.ftr $(FILES)
 
 xv6.pdf: $(PRINT)
 	./runoff
@@ -258,10 +252,10 @@ qemu-nox-gdb: fs.img xv6.img .gdbinit
 
 EXTRA=\
 	mkfs.c ulib.c user.h cat.c echo.c forktest.c grep.c kill.c\
-	ln.c ls.c mkdir.c rm.c stressfs.c usertests.c wc.c zombie.c\
-	factor.c sum_of_digits.c debugger.c printf.c umalloc.c foo.c program.c print_process.c set_level.c mhrrn_proc.c mhrrn_system.c phil.c\
-	sector_tester.c parent_pid.c\
-	README sector_file.txt sector_file1.txt dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
+	ln.c ls.c mkdir.c rm.c stressfs.c usertests.c wc.c zombie.c umalloc.c printf.c\
+	factor.c sum_of_digits.c debugger.c foo.c program.c print_process.c set_level.c\
+	free_pages_count.c mhrrn_proc.c mhrrn_system.c phil.c sector_tester.c parent_pid.c lazy_mmap.c\
+	README number.txt sector_file.txt sector_file1.txt dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\
 
 dist:

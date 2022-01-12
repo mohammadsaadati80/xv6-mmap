@@ -186,3 +186,26 @@ sys_sem_release(void)
   sem_release(i);
 }
 
+int
+sys_get_free_pages_count(void)
+{
+  return get_free_pages_count();
+}
+
+int
+sys_mmap(void)
+{
+  int fd, flags, len;
+  struct file *f;
+  argint(0, &len);
+  argint(1, &flags);
+  argfd(2, &fd, &f);
+  return mmap(len, flags, fd, f);
+}
+
+int
+sys_lazymm(char* addr) {
+  cprintf("requested lazy-mmaped address (0x%x)\n",(uint) addr);
+
+  return lazy_map(addr);  
+}

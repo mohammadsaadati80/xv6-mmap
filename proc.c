@@ -6,6 +6,10 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "sleeplock.h"
+#include "fs.h"
+#include "file.h"
+#include "stat.h"
 
 #define MAX_STARVATION 8000
 
@@ -170,6 +174,9 @@ found:
   memset(p->context, 0, sizeof *p->context);
   p->context->eip = (uint)forkret;
 
+  p->maps_count = 0;
+  p->mem_sz = 0;
+
   return p;
 }
 
@@ -255,6 +262,9 @@ fork(void)
   }
   np->sz = curproc->sz;
   np->parent = curproc;
+  np->maps_count = curproc->maps_count;
+  for(int i = 0; i < NMMAP; i++)
+    np->maps[i] = curproc->maps[i];
   *np->tf = *curproc->tf;
 
   // Clear %eax so that fork returns 0 in the child.
@@ -869,4 +879,61 @@ set_level(int pid, int level) {
     if(p->pid == pid)
       p->level = level;
   }
+}
+
+int
+mmap(int len, int flags, int fd, void *file)
+{
+  struct file *f = file;
+  struct proc *proc = myproc();
+  
+  struct lazy_mmap *lz = &(proc->maps[proc->maps_count]);
+  proc->maps_count++; 
+  lz->first = (char*) proc->mem_sz + MMAP_BASE;
+  lz->last = (char*) PGROUNDUP((uint) (lz->first + len));
+  lz->fd = fd;
+  lz->f = f;
+  int res = proc->mem_sz + MMAP_BASE;
+  proc->mem_sz += (lz->last - lz->first);
+
+  // cprintf("FLAG20 %d %d\n", proc->pid, proc->maps_count);
+  return res;
+}
+
+int
+lazy_map(char *addr) {
+  cprintf("requested lazy-mmaped address (0x%x)\n",(uint) addr);
+  struct proc *proc = myproc();
+
+  int found = 0;
+  struct lazy_mmap *map;
+  for (int i=0; i < proc->maps_count; i++) {
+    map = &proc->maps[i];
+    if (map->first <= addr && addr < map->last) {
+      found = 1;
+      break;
+    }
+  }
+
+  if (!found)
+    return -1;
+
+  struct file *f = map->f;
+  pde_t* pgdir = proc->pgdir;
+
+  int a = PGROUNDDOWN((int) addr); 
+  char * mem = kalloc();
+
+  if (mem == 0) {
+    cprintf("lazy map out of memory\n");
+    return -1;
+  }
+
+  memset(mem, 0, PGSIZE);
+  mappages(pgdir, (char*)a, PGSIZE, v2p(mem), PTE_W|PTE_U);
+
+  f->off = 0;
+  fileread(f, (char *)a, map->last - map->first);
+
+  return 1; // cool  
 }

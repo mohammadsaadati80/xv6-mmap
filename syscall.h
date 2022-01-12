@@ -31,3 +31,5 @@
 #define SYS_sem_init 30
 #define SYS_sem_acquire 31
 #define SYS_sem_release 32
+#define SYS_get_free_pages_count 33
+#define SYS_mmap 34

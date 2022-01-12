@@ -34,6 +34,13 @@ struct context {
 
 enum procstate { UNUSED, EMBRYO, SLEEPING, RUNNABLE, RUNNING, ZOMBIE };
 
+struct lazy_mmap {
+  char* first;
+  char* last;
+  int fd;
+  struct file *f;
+};
+
 // Per-process state
 struct proc {
   uint sz;                     // Size of process memory (bytes)
@@ -57,6 +64,9 @@ struct proc {
   int exec_time;               // Number of cycles dedicated to this process
   // int last_check;           // Last time we updated exec_time value
   int mhrrn_prior;             // MHRRN priority   
+  struct lazy_mmap maps[NMMAP];// Lazy mmaps allocated for process
+  int maps_count;              // number of maps used by process
+  int mem_sz;                  // mmap memory reserved by process
 };
 
 // Process memory is laid out contiguously, low addresses first:
