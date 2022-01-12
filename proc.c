@@ -930,7 +930,7 @@ lazy_map(char *addr) {
   }
 
   memset(mem, 0, PGSIZE);
-  mappages(pgdir, (char*)a, PGSIZE, v2p(mem), PTE_W|PTE_U);
+  mappages(pgdir, (char*)a, PGSIZE, V2P(mem), PTE_W|PTE_U);
 
   f->off = 0;
   fileread(f, (char *)a, map->last - map->first);
